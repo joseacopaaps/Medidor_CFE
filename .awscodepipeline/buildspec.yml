@@ -1,0 +1,67 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR ...
+      - aws --version
+      - echo "AWS default region:" $AWS_DEFAULT_REGION
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      # - LATEST_TAG=$(git describe --abbrev=0) || echo "There is no tag available" && exit 1
+      # - git checkout $LATEST_TAG
+      - PIPELINE=$(echo $CODEBUILD_INITIATOR | cut -c 27-)
+      - if [ "staging" = $PIPELINE ]; then IMAGE_TAG="staging"; else IMAGE_TAG=${COMMIT_HASH:=latest}; fi;
+      - echo "Image will be tagged as" $IMAGE_TAG
+      - echo "Build CLI container ..."
+      - docker image build . -f .docker/cli/Dockerfile -t ndd-cli
+      - docker container run --rm ndd-cli php --version
+      - docker container run --rm ndd-cli composer --version
+
+  build:
+    commands:
+      # CREATE SETTINGS FROM DEFAULT CONFIG...
+      - echo "Installing dependencies ..."
+      - mkdir -p /root/.composer
+      - docker container run --user $(id -u):$(id -g) --rm -e COMPOSER_HOME=/tmp/.composer -v $(pwd):/var/www/html/ndd -v /root/.composer:/tmp/.composer ndd-cli composer install --prefer-dist --optimize-autoloader --no-interaction
+      - echo "List security updates ..."
+      - docker container run --rm -v $(pwd):/var/www/html/ndd ndd-cli vendor/bin/drush pm:security
+      - echo "Executing unit tests ..."
+      - mkdir -p .artifacts/phpunit
+      - docker container run --rm -v $(pwd):/var/www/html/ndd ndd-cli vendor/bin/phpunit --log-junit .artifacts/phpunit/junit.xml
+      - echo "Checking coding style ..."
+      - docker container run --rm -v $(pwd):/var/www/html/ndd ndd-cli vendor/bin/php-cs-fixer fix --config .php_cs.dist --diff --verbose
+      # - vendor/bin/drush site:install minimal --existing-config -y
+      # IMPORT DRUPAL CONFIGURATION FROM YML FILES TO THE ACTIVE (DATABASE) CONFIGURATION...
+      # - docker run --rm -v $(pwd):/var/www/html ndd-cli vendor/bin/drush config:import -y
+      # MIGRATE FROM DRUPAL 7 DATABASE TO DRUPAL 8...
+      # - vendor/bin/drush migrate-upgrade --legacy-db-url=mysql://$DB_DRUPAL7_LEGACY_USER:$DB_DRUPAL7_LEGACY_PASSWORD@$DB_DRUPAL7_LEGACY_HOST/$DB_DRUPAL7_LEGACY_DATABASE --legacy-root=http://ec2-54-67-118-125.us-west-1.compute.amazonaws.com/
+      # CREATE LOCAL DRUPAL USER FOR TESTING...
+      # - vendor/bin/drush user:cancel --delete-content $TEST_USER_USERNAME -y
+      # - vendor/bin/drush user:create $TEST_USER_USERNAME --mail="admin@origamicode.com.mx" --password=$TEST_USER_PASSWORD
+      # - vendor/bin/drush user:role:add $TEST_USER_ROLE $TEST_USER_USERNAME
+      # REBUILD DRUPAL CACHE...
+      # - docker run --rm -v $(pwd):/var/www/html ndd-cli vendor/bin/drupal cache:rebuild
+
+  post_build:
+    commands:
+      - echo "Build HTTP container ..."
+      - docker image build -f Dockerfile -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - echo Build completed on `date`
+      - echo Pushing the Docker images ...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file ...
+      - printf '[{"name":"'$CONTAINER_NAME'","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
+
+cache:
+  paths:
+    - /root/.composer
