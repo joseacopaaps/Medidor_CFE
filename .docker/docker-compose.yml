@@ -8,6 +8,7 @@ services:
     volumes:
       - ./mariadb/charset.cnf:/etc/mysql/conf.d/charset.cnf
       - /tmp:/var/lib
+      - ./mariadb/datamysql:/var/lib/mysql
     networks:
       - laravel-devkit
     domainname: mariadb
