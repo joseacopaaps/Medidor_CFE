@@ -9,6 +9,6 @@ class Medidor extends Model
   protected $table = 'medidores';
 
   protected $fillable = [
-      'medidor', 'numero'
+      'cuenta', 'numero_medidor', 'uso', 'tarifa'
   ];
 }

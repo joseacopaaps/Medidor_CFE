@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Medidor;
+use App\Periodo;
 
-class MedidorController extends Controller
+class PeriodosController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,8 +14,7 @@ class MedidorController extends Controller
      */
     public function index()
     {
-      $medidores = Medidor::get();
-      return view('medidor.index', compact('medidores'));
+      return Periodo::get();
     }
 
     /**
@@ -36,9 +35,7 @@ class MedidorController extends Controller
      */
     public function store(Request $request)
     {
-      Medidor::create($request->all());
-
-      return redirect()->route('medidor.index')->with('success','Datos guardados correctamente.');
+        //
     }
 
     /**
@@ -49,8 +46,7 @@ class MedidorController extends Controller
      */
     public function show($id)
     {
-      $medidor = Medidor::find($id);
-      return view('medidor.show', compact('medidor'));
+
     }
 
     /**
@@ -61,7 +57,7 @@ class MedidorController extends Controller
      */
     public function edit($id)
     {
-      return Medidor::find($id);
+        //
     }
 
     /**
@@ -71,11 +67,9 @@ class MedidorController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Medidor $medidor)
+    public function update(Request $request, $id)
     {
-        $medidor->update($request->all());
-
-        return redirect()->route('medidor.index')->with('success','Datos actualizados correctamente.');
+        //
     }
 
     /**
@@ -86,10 +80,6 @@ class MedidorController extends Controller
      */
     public function destroy($id)
     {
-      $medidor = Medidor::find($id);
-
-      $medidor->delete();
-
-      return ['success' => 'Dato eliminado correctamente.'];
+        //
     }
 }

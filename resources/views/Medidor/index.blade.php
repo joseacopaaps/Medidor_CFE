@@ -13,72 +13,60 @@
             </div>
           @endif
 
-            <div class="card">
-                <div class="card-header">
-                  <a href="#" class="btn btn-primary pull-rigth" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Nuevo registro</a>
-                </div>
-                <div class="card-body">
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Medidor</th>
-                        <th scope="col">Número</th>
-                        <th scope="col">Accion</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @foreach ($medidores as $key => $medidor)
-                        <tr>
-                          <th scope="row">{{ $key+1 }}</th>
-                          <td>{{ $medidor->medidor }}</td>
-                          <td>{{ $medidor->numero }}</td>
-                          <td>
-                            <a href="#" class="btn btn-info"><i class="fa fa-edit"></i></a>
-                            <a href="#" class="btn btn-secondary"><i class="fa fa-bar-chart"></i></a>
-                            <a href="#" onclick="destroy('{{ route('medidor.destroy', $medidor->id) }}')" class="btn btn-danger"><i class="fa fa-trash"></i></a>
-                          </td>
-                        </tr>
-                      @endforeach
-                    </tbody>
-                  </table>
-                </div>
+          <div class="card">
+            <div class="card-header">
+              <a href="#" class="btn btn-primary pull-rigth" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i> Nuevo registro</a>
             </div>
-        </div>
-    </div>
-</div>
-@endsection
-
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <form method="post" action="{{ route('medidor.store') }}">
-      {{ csrf_field() }}
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Registrar Medidor</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group">
-                <label for="medidor">Medidor:</label>
-                <input type="text" class="form-control" id="medidor" name="medidor" placeholder="medidor" required>
-              </div>
-              <div class="form-group">
-                <label for="numero">Número:</label>
-                <input type="number" class="form-control" id="numero" name="numero" placeholder="número" required>
-              </div>
+            <div class="card-body">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Cuenta</th>
+                    <th scope="col">No. Medidor</th>
+                    <th scope="col">Uso</th>
+                    <th scope="col">Tarifa</th>
+                    <th scope="col">Accion</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($medidores as $key => $medidor)
+                    <tr>
+                      <th scope="row">{{ $key+1 }}</th>
+                      <td>{{ $medidor->cuenta }}</td>
+                      <td>{{ $medidor->numero_medidor }}</td>
+                      <td>{{ $medidor->uso }}</td>
+                      <td>{{ $medidor->tarifa }}</td>
+                      <td>
+                        <a href="#" onclick="editarMedidor('{{ route('medidor.edit', $medidor->id) }}')" class="btn btn-info" data-toggle="modal" data-target="#exampleModal-edit"><i class="fa fa-edit"></i></a>
+                        <a href="{{ route('medidor.show', $medidor->id) }}" class="btn btn-secondary"><i class="fa fa-bar-chart"></i></a>
+                        <a href="#" onclick="destroy('{{ route('medidor.destroy', $medidor->id) }}')" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-          <button type="submit" class="btn btn-primary">Guardar</button>
-        </div>
-      </div>
-    </form>
-  </div>
+    </div>
 </div>
+
+<script type="text/javascript">
+  function editarMedidor(url) {
+    $.ajax({
+      url: url,
+      method: "GET",
+      success: (data) => {
+        $('#cuenta-edit').val(data.cuenta)
+        $('#numero-medidor-edit').val(data.numero_medidor)
+        $('#uso-edit').val(data.uso)
+        $('#tarifa-edit').val(data.tarifa)
+        $('#form-edit').attr('action' , `/medidores/actualizar-medidor/${data.id}`)
+      }
+    })
+  }
+</script>
+@endsection
+
+@extends('medidor.modals')

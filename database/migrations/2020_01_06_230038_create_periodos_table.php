@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMedidoresTable extends Migration
+class CreatePeriodosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateMedidoresTable extends Migration
      */
     public function up()
     {
-        Schema::create('medidores', function (Blueprint $table) {
+        Schema::create('periodos', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('cuenta');
-            $table->string('numero_medidor');
-            $table->string('uso');
-            $table->string('tarifa');
+            $table->string('inicio');
+            $table->string('fin');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateMedidoresTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('medidores');
+        Schema::dropIfExists('periodos');
     }
 }
