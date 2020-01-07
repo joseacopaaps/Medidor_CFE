@@ -74,39 +74,38 @@
   google.charts.setOnLoadCallback(drawChart);
 
   function drawChart() {
-    $.ajax({
-      url: '/periodos-medidores',
-      method: "GET",
-      success: (periodos) => {
-        var data = new google.visualization.DataTable();
-        data.addColumn('number', 'Años');
-        periodos.forEach((periodo) => {
-          let inicio = moment(periodo.inicio).format('ll')
-          let fin = moment(periodo.fin).format('ll')
+    axios.get('/periodos-medidores', {
+      responseType: 'json'
+    })
+    .then((res) => {
+      var data = new google.visualization.DataTable();
+      data.addColumn('number', 'Años');
+      res.data.forEach((periodo) => {
+        let inicio = moment(periodo.inicio).format('ll')
+        let fin = moment(periodo.fin).format('ll')
 
-          data.addColumn('number', `${inicio} a ${fin}`);
-        })
+        data.addColumn('number', `${inicio} a ${fin}`);
+      })
 
-        data.addRows([
-          [1,  37.8, 80.8, 41.8, 45.4],
-          [2,  30.9, 69.5, 32.4, 32.4],
-          [3,  25.4,   57, 25.7, 69.5],
-          [4,  11.7, 69.5, 10.5, 25.4]
-        ]);
+      data.addRows([
+        [1,  37.8, 80.8, 41.8, 45.4],
+        [2,  30.9, 69.5, 32.4, 32.4],
+        [3,  25.4,   57, 25.7, 69.5],
+        [4,  11.7, 69.5, 10.5, 25.4]
+      ]);
 
-        var options = {
-          chart: {
-            title: 'Consumo de Energía',
-            subtitle: 'Gráfica por periodos'
-          },
-          width: 990,
-          height: 500
-        };
+      var options = {
+        chart: {
+          title: 'Consumo de Energía',
+          subtitle: 'Gráfica por periodos'
+        },
+        width: 990,
+        height: 500
+      };
 
-        var chart = new google.charts.Line(document.getElementById('curve_chart'));
+      var chart = new google.charts.Line(document.getElementById('curve_chart'));
 
-        chart.draw(data, google.charts.Line.convertOptions(options));
-      }
+      chart.draw(data, google.charts.Line.convertOptions(options));
     })
   }
 </script>
