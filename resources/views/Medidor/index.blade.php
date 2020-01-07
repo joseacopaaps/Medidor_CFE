@@ -54,16 +54,16 @@
 
 <script type="text/javascript">
   function editarMedidor(url) {
-    $.ajax({
-      url: url,
-      method: "GET",
-      success: (data) => {
-        $('#cuenta-edit').val(data.cuenta)
-        $('#numero-medidor-edit').val(data.numero_medidor)
-        $('#uso-edit').val(data.uso)
-        $('#tarifa-edit').val(data.tarifa)
-        $('#form-edit').attr('action' , `/medidores/actualizar-medidor/${data.id}`)
-      }
+    axios.get(url, {
+      responseType: 'json'
+    })
+    .then((item) => {
+      document.getElementById('cuenta-edit').value = item.data.cuenta
+      document.getElementById('numero-medidor-edit').value = item.data.numero_medidor
+      document.getElementById('uso-edit').value = item.data.uso
+      document.getElementById('tarifa-edit').value = item.data.tarifa
+      document.getElementById('lectura-edit').value = item.data.lectura
+      document.getElementById('form-edit').setAttribute('action' , `/medidores/actualizar-medidor/${item.data.id}`)
     })
   }
 </script>

@@ -19,6 +19,7 @@ class CreateMedidoresTable extends Migration
             $table->string('numero_medidor');
             $table->string('uso');
             $table->string('tarifa');
+            $table->string('lectura');
             $table->timestamps();
         });
     }

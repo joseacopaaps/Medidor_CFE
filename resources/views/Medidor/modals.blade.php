@@ -28,6 +28,10 @@
                 <label for="tarifa">Tarifa:</label>
                 <input type="text" class="form-control" id="tarifa" name="tarifa" placeholder="tarifa" required>
               </div>
+              <div class="form-group">
+                <label for="lectura">Lectura:</label>
+                <input type="text" class="form-control" id="lectura" name="lectura" placeholder="lectura" required>
+              </div>
             </div>
           </div>
         </div>
@@ -55,20 +59,24 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
-                <label for="cuenta">Cuenta:</label>
+                <label for="cuenta-edit">Cuenta:</label>
                 <input type="text" class="form-control" id="cuenta-edit" name="cuenta" placeholder="cuenta" required>
               </div>
               <div class="form-group">
-                <label for="numero-medidor">No. Medidor:</label>
+                <label for="numero-medidor-edit">No. Medidor:</label>
                 <input type="text" class="form-control" id="numero-medidor-edit" name="numero_medidor" placeholder="no. medidor" required>
               </div>
               <div class="form-group">
-                <label for="medidor">Uso:</label>
+                <label for="uso-edit">Uso:</label>
                 <input type="text" class="form-control" id="uso-edit" name="uso" placeholder="uso" required>
               </div>
               <div class="form-group">
-                <label for="tarifa">Tarifa:</label>
+                <label for="tarifa-edit">Tarifa:</label>
                 <input type="text" class="form-control" id="tarifa-edit" name="tarifa" placeholder="tarifa" required>
+              </div>
+              <div class="form-group">
+                <label for="lectura-edit">Lectura:</label>
+                <input type="text" class="form-control" id="lectura-edit" name="lectura" placeholder="lectura" required>
               </div>
             </div>
           </div>
@@ -83,16 +91,18 @@
 </div>
 
 <div class="modal fade" id="exampleModal-consumo" tabindex="-1" role="dialog" aria-labelledby="exampleModal-consumo" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalConsumoLabel">Registro</h5>
+        <h5 class="modal-title" id="exampleModalConsumoLabel"></h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-
+        <label>Lectura Anterior:</label><p id="lecturaAnterior"></p>
+        <label>Lectura Actual:</label><p id="lecturaActual"></p>
+        <label>Consumo:</label> <p id="consumo"></p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>

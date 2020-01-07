@@ -19,49 +19,29 @@
           <a href={{ route('medidor.index') }} class="btn btn-light pull-right"><i class="fa fa-undo" aria-hidden="true"></i> Regresar</a>
         </div>
         <div class="card-body">
-          <a href="#" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal-consumo"><i class="fa fa-bar-chart"></i> Consumo</a>
-          {{-- <div class="col-md-4">
-            <form method="post" id="form-edit">
+          <div class="col-md-4">
+            <form method="post">
               {{ csrf_field() }}
               <div class="input-group mb-2">
+                <input type="text" class="form-control" id="datepicker" readonly>
                 <div class="input-group-prepend">
                   <button class="input-group-text"><i class="fa fa-search"></i></button>
                 </div>
-                <input type="text" class="form-control" placeholder="buscar">
               </div>
             </form>
-          </div> --}}
+          </div>
+
+          <div class="col-md-4">
+            <div class="input-group mb-2">
+              <input type="number" class="form-control" placeholder="lectura actual" id="lectura-actual" required>
+              <div class="input-group-prepend">
+                <button class="input-group-text" onclick="calcularLectura()"><i class="fa fa-calculator"></i></button>
+              </div>
+            </div>
+          </div>
 
           <div class="col-md-12">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Periodo</th>
-                  <th scope="col">Dias</th>
-                  <th scope="col">Lectura Anterior</th>
-                  <th scope="col">Lectura Actual</th>
-                  <th scope="col">Promedio KWh</th>
-                  <th scope="col">Accion</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td>14 JUN 2019 a 12 AGO 2019</td>
-                  <td>59</td>
-                  <td>04556</td>
-                  <td>04339</td>
-                  <td>3.67</td>
-                  <td>
-                    <a href="#" class="btn btn-info"><i class="fa fa-edit"></i></a>
-                    <a href="#" class="btn btn-danger"><i class="fa fa-trash"></i></a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            <div id="curve_chart"></div>
+            <div id="chart_div"></div>
           </div>
         </div>
       </div>
@@ -70,43 +50,53 @@
 </div>
 
 <script type="text/javascript">
-  google.charts.load('current', {'packages':['line']});
+  function calcularLectura() {
+    let lecturaAnterior = {{ $medidor->lectura }}
+    let lecturaActual = document.getElementById('lectura-actual').value
+
+    if (lecturaActual < lecturaAnterior) {
+      swal(
+        '¡Invalido!',
+        'Lectura no valida.',
+        'warning'
+      )
+    }else {
+      $("#exampleModal-consumo").modal();
+      let lectura = lecturaActual - lecturaAnterior
+      document.getElementById('exampleModalConsumoLabel').innerHTML = moment().format('ll')
+      document.getElementById('lecturaAnterior').innerHTML = lecturaAnterior
+      document.getElementById('lecturaActual').innerHTML = lecturaActual
+      document.getElementById('consumo').innerHTML = `${lectura}kWh`
+    }
+  }
+  google.charts.load('current', {packages: ['corechart', 'line']});
   google.charts.setOnLoadCallback(drawChart);
 
   function drawChart() {
-    axios.get('/periodos-medidores', {
-      responseType: 'json'
-    })
-    .then((res) => {
-      var data = new google.visualization.DataTable();
-      data.addColumn('number', 'Años');
-      res.data.forEach((periodo) => {
-        let inicio = moment(periodo.inicio).format('ll')
-        let fin = moment(periodo.fin).format('ll')
+    var data = new google.visualization.DataTable();
+    data.addColumn('number', 'X');
+    data.addColumn('number', 'KWh');
 
-        data.addColumn('number', `${inicio} a ${fin}`);
-      })
+    data.addRows([
+      [0, 3],   [1, 4],  [2, 3],  [3, 1],  [4, 6],  [5, 9],
+      [6, 3],  [7, 2],  [8, 2],  [9, 8],  [10, 2], [11, 4],
+      [12, 2], [13, 8], [14, 3], [15, 4], [16, 6], [17, 8],
+      [18, 9], [19, 4], [20, 2], [21, 5], [22, 8], [23, 1],
+      [24, 9]
+    ]);
 
-      data.addRows([
-        [1,  37.8, 80.8, 41.8, 45.4],
-        [2,  30.9, 69.5, 32.4, 32.4],
-        [3,  25.4,   57, 25.7, 69.5],
-        [4,  11.7, 69.5, 10.5, 25.4]
-      ]);
+    var options = {
+      hAxis: {
+        title: 'KWh'
+      },
+      vAxis: {
+        title: 'Hora'
+      }
+    };
 
-      var options = {
-        chart: {
-          title: 'Consumo de Energía',
-          subtitle: 'Gráfica por periodos'
-        },
-        width: 990,
-        height: 500
-      };
+    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
 
-      var chart = new google.charts.Line(document.getElementById('curve_chart'));
-
-      chart.draw(data, google.charts.Line.convertOptions(options));
-    })
+    chart.draw(data, options);
   }
 </script>
 

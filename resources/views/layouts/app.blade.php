@@ -20,6 +20,7 @@
     {{-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> --}}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>
@@ -84,8 +85,17 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/locale/es.js"></script>
     <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script type="text/javascript" src="{{ url('sweetalert2/sweetalert2.all.min.js') }}"></script>
     <script type="text/javascript">
+      // $('#datepicker').datepicker({
+      //   dateFormat: 'mm/dd/yy',
+      //   autoclose: true,
+      //   todayHighlight: true,
+      //   toggleActive: true,
+      //   endDate: '0',
+      // });
+      $('#datepicker').daterangepicker();
       function destroy(url){
         event.preventDefault();
         swal({
