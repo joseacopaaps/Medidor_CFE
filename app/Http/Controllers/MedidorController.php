@@ -106,7 +106,7 @@ class MedidorController extends Controller
     {
       $ini = $request['data']['fecha1'];
       $fin = $request['data']['fecha2'];
-      $periodos = Periodo::where('medidor_id', $request['data']['medidor_id'])->whereBetween('created_at', [$ini, $fin])->get();
+      $periodos = Periodo::where('medidor_id', $request['data']['medidor_id'])->whereBetween('created_at', [$ini, $fin])->orderBy('created_at', 'asc')->get();
 
       return $periodos;
     }

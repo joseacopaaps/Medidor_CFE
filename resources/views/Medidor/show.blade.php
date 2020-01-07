@@ -86,22 +86,48 @@
   }
 
   function drawChart() {
+    let lecturaAnterior = {{ $medidor->lectura }}
     let array = []
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'X');
     data.addColumn('number', 'KWh');
 
     response.forEach((fecha) => {
-      array.push([moment(fecha.created_at).format('ll'), Number(fecha.lectura)])
+      let lectura = Number(fecha.lectura) - lecturaAnterior
+      array.push([moment(fecha.created_at).format('ll'), lectura])
     })
     data.addRows(array);
 
     var options = {
       hAxis: {
-        title: 'Fechas'
+        title: 'Fechas',
+        textStyle: {
+          color: '#212529',
+          fontSize: 8,
+          fontName: 'Arial',
+          bold: true,
+          italic: true
+        },
+        titleTextStyle: {
+          color: '#212529',
+          fontSize: 12,
+          fontName: 'Arial',
+          bold: false,
+          italic: true
+        }
       },
       vAxis: {
-        title: 'KWh'
+        title: 'KWh',
+        textStyle: {
+          color: '#212529',
+          fontSize: 10,
+          bold: true
+        },
+        titleTextStyle: {
+          color: '#212529',
+          fontSize: 12,
+          bold: true
+        }
       }
     };
 
