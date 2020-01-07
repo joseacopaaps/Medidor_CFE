@@ -24,6 +24,6 @@ Route::group(['prefix' => 'medidores'], function () {
   Route::get('/editar-medidor/{id}', 'MedidorController@edit')->name('medidor.edit');
   Route::post('/actualizar-medidor/{medidor}', 'MedidorController@update')->name('medidor.update');
   Route::delete('/eliminar-medidor/{id}', 'MedidorController@destroy')->name('medidor.destroy');
+  Route::post('/crear-periodo', 'MedidorController@storePeriodo')->name('periodo.store');
+  Route::post('/buscar-periodos', 'MedidorController@searchPeriodo')->name('periodo.search');
 });
-
-Route::get('/periodos-medidores', 'PeriodosController@index');

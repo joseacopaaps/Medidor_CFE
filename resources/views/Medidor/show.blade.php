@@ -20,8 +20,9 @@
         </div>
         <div class="card-body">
           <div class="col-md-4">
-            <form method="post">
+            <form method="post" onsubmit="buscarPeriodo(event)">
               {{ csrf_field() }}
+              <input type="hidden" id="medidor_id" value="{{ $medidor->id }}">
               <div class="input-group mb-2">
                 <input type="text" class="form-control" id="datepicker" readonly>
                 <div class="input-group-prepend">
@@ -51,7 +52,7 @@
 
 <script type="text/javascript">
   function calcularLectura() {
-    let lecturaAnterior = {{ $medidor->lectura }}
+    let lecturaAnterior = {{ $medidor->periodos[0]->lectura }}
     let lecturaActual = document.getElementById('lectura-actual').value
 
     if (lecturaActual < lecturaAnterior) {
@@ -63,34 +64,44 @@
     }else {
       $("#exampleModal-consumo").modal();
       let lectura = lecturaActual - lecturaAnterior
-      document.getElementById('exampleModalConsumoLabel').innerHTML = moment().format('ll')
+      document.getElementById('exampleModalConsumoLabel').innerHTML = `Hoy ${moment().format('ll')}`
       document.getElementById('lecturaAnterior').innerHTML = lecturaAnterior
       document.getElementById('lecturaActual').innerHTML = lecturaActual
       document.getElementById('consumo').innerHTML = `${lectura}kWh`
     }
   }
-  google.charts.load('current', {packages: ['corechart', 'line']});
-  google.charts.setOnLoadCallback(drawChart);
+  var response
+  function buscarPeriodo(event) {
+    event.preventDefault()
+    let rango = event.target.datepicker.value.split('-')
+
+    axios.post('/medidores/buscar-periodos', {
+      data: { fecha1: moment(rango[0]).format('YYYY-MM-DD'), fecha2: moment(rango[1]).format('YYYY-MM-DD'), medidor_id: event.target.medidor_id.value }
+    })
+    .then((res) => {
+      response = res.data
+      google.charts.load('current', {packages: ['corechart', 'line']});
+      google.charts.setOnLoadCallback(drawChart);
+    })
+  }
 
   function drawChart() {
+    let array = []
     var data = new google.visualization.DataTable();
-    data.addColumn('number', 'X');
+    data.addColumn('string', 'X');
     data.addColumn('number', 'KWh');
 
-    data.addRows([
-      [0, 3],   [1, 4],  [2, 3],  [3, 1],  [4, 6],  [5, 9],
-      [6, 3],  [7, 2],  [8, 2],  [9, 8],  [10, 2], [11, 4],
-      [12, 2], [13, 8], [14, 3], [15, 4], [16, 6], [17, 8],
-      [18, 9], [19, 4], [20, 2], [21, 5], [22, 8], [23, 1],
-      [24, 9]
-    ]);
+    response.forEach((fecha) => {
+      array.push([moment(fecha.created_at).format('ll'), Number(fecha.lectura)])
+    })
+    data.addRows(array);
 
     var options = {
       hAxis: {
-        title: 'KWh'
+        title: 'Fechas'
       },
       vAxis: {
-        title: 'Hora'
+        title: 'KWh'
       }
     };
 

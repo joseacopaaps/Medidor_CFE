@@ -9,6 +9,11 @@ class Periodo extends Model
   protected $table = 'periodos';
 
   protected $fillable = [
-      'inicio', 'fin'
+      'lectura', 'medidor_id'
   ];
+
+  public function medidor()
+  {
+    return $this->belongsTo('App\Medidor');
+  }
 }

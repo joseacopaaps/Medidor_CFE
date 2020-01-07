@@ -15,9 +15,10 @@ class CreatePeriodosTable extends Migration
     {
         Schema::create('periodos', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('inicio');
-            $table->string('fin');
+            $table->string('lectura');
+            $table->unsignedBigInteger('medidor_id');
             $table->timestamps();
+            $table->foreign('medidor_id')->references('id')->on('medidores')->onDelete('cascade');
         });
     }
 

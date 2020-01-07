@@ -90,6 +90,32 @@
   </div>
 </div>
 
+<div class="modal fade" id="exampleModal-periodo" tabindex="-1" role="dialog" aria-labelledby="exampleModal-periodo" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <form action="{{ route('periodo.store') }}" method="post">
+      {{ csrf_field() }}
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalPeriodoLabel"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <input type="hidden" id="medidor-id" name="medidor_id">
+            <label for="periodo-edit">Lectura:</label>
+            <input type="text" class="form-control" id="periodo-edit" name="lectura" placeholder="lectura" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="modal fade" id="exampleModal-consumo" tabindex="-1" role="dialog" aria-labelledby="exampleModal-consumo" aria-hidden="true">
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content">

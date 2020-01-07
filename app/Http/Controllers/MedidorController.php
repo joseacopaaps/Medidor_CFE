@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Medidor;
+use App\Periodo;
 
 class MedidorController extends Controller
 {
@@ -49,7 +50,8 @@ class MedidorController extends Controller
      */
     public function show($id)
     {
-      $medidor = Medidor::find($id);
+      $medidor = Medidor::with('periodos')->find($id);
+
       return view('medidor.show', compact('medidor'));
     }
 
@@ -91,5 +93,21 @@ class MedidorController extends Controller
       $medidor->delete();
 
       return ['success' => 'Dato eliminado correctamente.'];
+    }
+
+    public function storePeriodo(Request $request)
+    {
+      Periodo::create($request->all());
+
+      return redirect()->route('medidor.index')->with('success','Datos guardados correctamente.');
+    }
+
+    public function searchPeriodo(Request $request)
+    {
+      $ini = $request['data']['fecha1'];
+      $fin = $request['data']['fecha2'];
+      $periodos = Periodo::where('medidor_id', $request['data']['medidor_id'])->whereBetween('created_at', [$ini, $fin])->get();
+
+      return $periodos;
     }
 }

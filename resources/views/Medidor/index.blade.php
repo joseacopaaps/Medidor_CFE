@@ -40,6 +40,7 @@
                       <td>
                         <a href="#" onclick="editarMedidor('{{ route('medidor.edit', $medidor->id) }}')" class="btn btn-info" data-toggle="modal" data-target="#exampleModal-edit"><i class="fa fa-edit"></i></a>
                         <a href="{{ route('medidor.show', $medidor->id) }}" class="btn btn-secondary"><i class="fa fa-bar-chart"></i></a>
+                        <a href="#" onclick="agregarPeriodo('{{ $medidor->id }}', '{{ $medidor->numero_medidor }}')" class="btn btn-info" data-toggle="modal" data-target="#exampleModal-periodo"><i class="fa fa-plus"></i></a>
                         <a href="#" onclick="destroy('{{ route('medidor.destroy', $medidor->id) }}')" class="btn btn-danger"><i class="fa fa-trash"></i></a>
                       </td>
                     </tr>
@@ -65,6 +66,11 @@
       document.getElementById('lectura-edit').value = item.data.lectura
       document.getElementById('form-edit').setAttribute('action' , `/medidores/actualizar-medidor/${item.data.id}`)
     })
+  }
+
+  function agregarPeriodo(medidor_id, numero) {
+    document.getElementById('exampleModalPeriodoLabel').innerHTML = `No. Medidor: ${numero}`
+    document.getElementById('medidor-id').value = medidor_id
   }
 </script>
 @endsection
