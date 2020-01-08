@@ -73,12 +73,15 @@
   var response
   function buscarPeriodo(event) {
     event.preventDefault()
-    let rango = event.target.datepicker.value.split('-')
+    let rango = event.target.datepicker.value.split(' - ')
+    var inicio = rango[0].split('/')
+    var fin = rango[1].split('/')
 
     axios.post('/medidores/buscar-periodos', {
-      data: { fecha1: moment(rango[0]).format('YYYY-MM-DD'), fecha2: moment(rango[1]).format('YYYY-MM-DD'), medidor_id: event.target.medidor_id.value }
+      data: { fecha1: `${inicio[2]}-${inicio[1]}-${inicio[0]}`, fecha2: `${fin[2]}-${fin[1]}-${fin[0]}`, medidor_id: event.target.medidor_id.value }
     })
     .then((res) => {
+      console.log(res.data)
       response = res.data
       google.charts.load('current', {packages: ['corechart', 'line']});
       google.charts.setOnLoadCallback(drawChart);
